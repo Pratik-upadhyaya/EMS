@@ -1,0 +1,244 @@
+/* ===========================================================
+   EventHive — theme layer on top of Bootstrap 5
+   Palette:
+     --ink       #1F2430  (headings / primary text)
+     --paper     #FAF9F6  (page background)
+     --accent    #6C5CE7  (primary actions, links)
+     --accent-2  #00B894  (available / success)
+     --accent-3  #E17055  (booked / danger)
+     --muted     #636E72  (secondary text)
+   Type:
+     Display -> "Poppins"  (headings, brand, buttons)
+     Body    -> "Inter"    (paragraphs, labels, tables)
+   =========================================================== */
+
+:root {
+  --ink: #1F2430;
+  --paper: #FAF9F6;
+  --accent: #6C5CE7;
+  --accent-dark: #5849c2;
+  --accent-2: #00B894;
+  --accent-3: #E17055;
+  --muted: #636E72;
+  --card-radius: 14px;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, .brand, .btn {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ---------- Navbar ---------- */
+.navbar-eventhive {
+  background-color: var(--ink);
+}
+.navbar-eventhive .navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+.navbar-eventhive .navbar-brand span {
+  color: var(--accent-2);
+}
+.navbar-eventhive .nav-link {
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+.navbar-eventhive .nav-link:hover,
+.navbar-eventhive .nav-link.active {
+  color: #fff;
+}
+.navbar-eventhive .btn-nav-cta {
+  background-color: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 1.1rem;
+  font-weight: 600;
+}
+.navbar-eventhive .btn-nav-cta:hover {
+  background-color: var(--accent-dark);
+  color: #fff;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+  border-radius: 10px;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+.btn-outline-accent {
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+  border-radius: 10px;
+  background: transparent;
+}
+.btn-outline-accent:hover {
+  background-color: var(--accent);
+  color: #fff;
+}
+.btn-danger-soft {
+  background-color: #FDECEA;
+  color: var(--accent-3);
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+}
+.btn-danger-soft:hover {
+  background-color: var(--accent-3);
+  color: #fff;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(135deg, var(--ink) 0%, #2d3348 100%);
+  color: #fff;
+  border-radius: 0 0 28px 28px;
+  padding: 4.5rem 0 3.5rem;
+}
+.hero .eyebrow {
+  color: var(--accent-2);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+.hero h1 {
+  font-weight: 700;
+  font-size: 2.6rem;
+}
+.hero p.lead {
+  color: rgba(255,255,255,0.75);
+}
+
+/* ---------- Event cards ---------- */
+.event-card {
+  border: none;
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 14px rgba(31, 36, 48, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+  height: 100%;
+}
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(31, 36, 48, 0.12);
+}
+.event-card .date-chip {
+  background-color: var(--paper);
+  border-radius: 10px;
+  padding: 0.35rem 0.6rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--ink);
+  display: inline-block;
+}
+.event-card .card-title {
+  font-weight: 600;
+  color: var(--ink);
+}
+.event-card .venue {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Seat availability meter on cards */
+.seat-meter {
+  height: 6px;
+  border-radius: 999px;
+  background-color: #ECECF3;
+  overflow: hidden;
+}
+.seat-meter .fill {
+  height: 100%;
+  background-color: var(--accent-2);
+  border-radius: 999px;
+}
+.seat-meter .fill.almost-full {
+  background-color: #F0B429;
+}
+.seat-meter .fill.full {
+  background-color: var(--accent-3);
+}
+
+.badge-open {
+  background-color: #E6F9F1;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+.badge-full {
+  background-color: #FDECEA;
+  color: var(--accent-3);
+  font-weight: 600;
+}
+
+/* ---------- Seat grid (event detail) ---------- */
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: 8px;
+  max-width: 560px;
+}
+.seat {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: default;
+}
+.seat.available {
+  background-color: #5ef372;
+  color: var(--muted);
+}
+.seat.booked {
+  background-color: var(--accent-3);
+}
+.seat.booked.you {
+  background-color: var(--accent);
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* ---------- Auth cards ---------- */
+.auth-card {
+  border: none;
+  border-radius: var(--card-radius);
+  box-shadow: 0 4px 24px rgba(31, 36, 48, 0.08);
+}
+.auth-card .form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+/* ---------- Misc ---------- */
+.section-title {
+  font-weight: 700;
+  color: var(--ink);
+}
+.text-muted-soft {
+  color: var(--muted) !important;
+}
+footer.site-footer {
+  background-color: var(--ink);
+  color: rgba(255,255,255,0.6);
+}
