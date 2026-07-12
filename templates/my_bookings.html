@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings — EventHive{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="section-title h4 mb-1">My Bookings</h1>
+      <p class="text-muted-soft small mb-0">Events you've reserved a seat for</p>
+    </div>
+    <span class="text-muted-soft small">{{ bookings|length }} booking{{ bookings|length|pluralize }}</span>
+  </div>
+
+  {% if bookings %}
+  <div class="row g-4">
+    {% for booking in bookings %}
+      {% with event=booking.event %}
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card event-card">
+          <div class="card-body p-4">
+
+            {% if event %}
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="date-chip">
+                  <i class="bi bi-calendar-event me-1"></i>{{ event.dnt|date:"M d, Y" }}
+                </span>
+                {% if event.dnt < now %}
+                  <span class="badge bg-secondary rounded-pill px-2 py-1">Past</span>
+                {% else %}
+                  <span class="badge badge-open rounded-pill px-2 py-1">Upcoming</span>
+                {% endif %}
+              </div>
+
+              <h5 class="card-title mb-1">{{ event.name }}</h5>
+              <p class="venue mb-1"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</p>
+              <p class="small text-muted-soft mb-3">
+                <i class="bi bi-clock-history me-1"></i>Booked on {{ booking.booked_at|date:"M d, Y" }}
+              </p>
+
+              <div class="d-flex gap-2">
+                <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-accent flex-fill">
+                  View Details
+                </a>
+                <form method="post" action="{% url 'cancel_seat' event.id %}"
+                      class="cancel-booking-form flex-fill">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger-soft w-100">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                  </button>
+                </form>
+              </div>
+
+            {% else %}
+              <!-- The event this booking pointed to has been deleted (event FK is null) -->
+              <div class="text-center py-3">
+                <i class="bi bi-exclamation-circle text-muted-soft display-6"></i>
+                <p class="text-muted-soft small mt-2 mb-0">This event is no longer available.</p>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-ticket-perforated display-4 text-muted-soft"></i>
+      <p class="mt-3 text-muted-soft">You haven't joined any events yet.</p>
+      <a href="{% url 'event_list' %}" class="btn btn-primary mt-2">Browse Events</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(function () {
+    $('.cancel-booking-form').on('submit', function (e) {
+      if (!confirm('Cancel your seat for this event?')) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
+{% endblock %}

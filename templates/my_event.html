@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}My Events — EventHive{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="section-title h4 mb-1">My Events</h1>
+      <p class="text-muted-soft small mb-0">Events you're organizing</p>
+    </div>
+    <a href="{% url 'create_event' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle me-1"></i>Create Event
+    </a>
+  </div>
+
+  {% if events %}
+  <div class="row g-4">
+    {% for event in events %}
+      {% with booked=event.bookings.count %}
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card event-card">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="date-chip">
+                <i class="bi bi-calendar-event me-1"></i>{{ event.dnt|date:"M d, Y" }}
+              </span>
+              {% if booked >= event.total_seats %}
+                <span class="badge badge-full rounded-pill px-2 py-1">Full</span>
+              {% else %}
+                <span class="badge badge-open rounded-pill px-2 py-1">Open</span>
+              {% endif %}
+            </div>
+
+            <h5 class="card-title mb-1">{{ event.name }}</h5>
+            <p class="venue mb-3"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</p>
+
+            <div class="seat-meter mb-2">
+              {% widthratio booked event.total_seats 100 as pct_filled %}
+              <div class="fill {% if pct_filled >= 100 %}full{% elif pct_filled >= 70 %}almost-full{% endif %}"
+                   style="width: {{ pct_filled }}%;"></div>
+            </div>
+            <p class="small text-muted-soft mb-3">
+              {{ booked }} / {{ event.total_seats }} seats booked
+              &nbsp;·&nbsp; {{ event.seats }} left
+            </p>
+
+            <div class="d-flex gap-2">
+              <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-accent flex-fill">
+                <i class="bi bi-people me-1"></i>Attendees
+              </a>
+              {% comment %} <a href="{% url 'event_edit' event.id %}" class="btn btn-outline-accent flex-fill">
+                <i class="bi bi-pencil me-1"></i>Edit
+              </a> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-calendar-plus display-4 text-muted-soft"></i>
+      <p class="mt-3 text-muted-soft">You haven't created any events yet.</p>
+      <a href="{% url 'create_event' %}" class="btn btn-primary mt-2">Create your first event</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

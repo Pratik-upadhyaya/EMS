@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}EventHive — Browse Events{% endblock %}
+
+{% block content %}
+
+<!-- ===== Hero ===== -->
+<section class="hero text-center">
+  <div class="container">
+    <div class="eyebrow mb-2">Workshop Community</div>
+    <h1 class="mb-3">Find your next event.<br>Save a seat before it's gone.</h1>
+    <p class="lead mx-auto" style="max-width: 560px;">
+      Browse upcoming meetups and workshops, or create your own in under a minute.
+    </p>
+    {% if user.is_authenticated %}
+      <a href="{% url 'create_event' %}" class="btn btn-primary btn-lg mt-3 px-4">
+        <i class="bi bi-plus-circle me-1"></i> Create an Event
+      </a>
+    {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg mt-3 px-4">Get Started</a>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ===== Event grid ===== -->
+<section class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title h4 mb-0">Upcoming Events</h2>
+    <span class="text-muted-soft small">{{ events|length }} event{{ events|length|pluralize }} found</span>
+  </div>
+
+  {% if events %}
+  <div class="row g-4">
+    {% for event in events %}
+      {% widthratio event.seats event.total_seats 100 as pct_filled %}
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card event-card">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="date-chip">
+                <i class="bi bi-calendar-event me-1"></i>{{ event.date_time|date:"M d, Y" }}
+              </span>
+              {% if event.seats >= event.total_seats %}
+                <span class="badge badge-full rounded-pill px-2 py-1">Full</span>
+              {% else %}
+                <span class="badge badge-open rounded-pill px-2 py-1">Open</span>
+              {% endif %}
+            </div>
+
+            <h5 class="card-title mb-1">{{ event.name }}</h5>
+            <p class="venue mb-3"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</p>
+
+            <div class="seat-meter mb-2">
+              <div class="fill {% if pct_filled >= 100 %}full{% elif pct_filled >= 70 %}almost-full{% endif %}"
+                   style="width: {{ pct_filled }}%;"></div>
+            </div>
+            <p class="small text-muted-soft mb-3">
+              {{ event.seats }} / {{ event.total_seats }} seats booked
+            </p>
+
+            <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-accent w-100">
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-calendar-x display-4 text-muted-soft"></i>
+      <p class="mt-3 text-muted-soft">No events yet. Be the first to create one!</p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'create_event' %}" class="btn btn-primary mt-2">Create an Event</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+
+{% endblock %}

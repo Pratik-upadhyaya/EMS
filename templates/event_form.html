@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Create Event — EventHive{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-11 col-md-8 col-lg-6">
+      <div class="card auth-card p-4 p-md-5">
+        <div class="mb-4">
+          <span class="date-chip mb-2 d-inline-block"><i class="bi bi-stars me-1"></i>New Event</span>
+          <h3 class="mb-0">Tell us about your event</h3>
+          <p class="text-muted-soft small">Fill in the details — you can edit seats anytime.</p>
+        </div>
+
+        <form method="post" novalidate>
+          {% if form.errors %}
+            <div class="alert alert-danger py-2 small">
+              <ul class="mb-0">
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="id_name" class="form-label">Event Name</label>
+            {{ form.name }}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            {{ form.description }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="id_date_time" class="form-label">Date &amp; Time</label>
+              {{ form.dnt }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="id_total_seats" class="form-label">Total Seats</label>
+              {{ form.total_seats }}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="id_venue" class="form-label">Venue</label>
+            {{ form.venue }}
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-check-circle me-1"></i>Publish Event
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-outline-accent px-4">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="
+https://cdn.jsdelivr.net/npm/tinymce@8.7.0/tinymce.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/tinymce@8.7.0/skins/ui/oxide/content.min.css
+" rel="stylesheet">
+<script>
+  tinymce.init({
+    license_key: 'gpl',
+    selector: '#id_description',
+    menubar: false,
+    plugins: 'lists link image preview',
+    toolbar: 'undo redo | bold italic underline | bullist numlist | link | preview',
+    branding: false,
+    height: 200,
+    content_css: 'https://cdn.jsdelivr.net/npm/tinymce@8.7.0/skins/ui/oxide/content.min.css',
+  });
+</script>
+{% endblock extra_js %}

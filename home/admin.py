@@ -1,16 +1,12 @@
 from django.contrib import admin
-from .models import Event, Bookings, ExpiredEvent
+from .models import Event, Bookings
 
+
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ["name", "seats"]
 
 
-admin.site.register(Event, EventAdmin)
-admin.site.register(Bookings)
-
-from django.utils import timezone
-class ExpiredEventAdmin(admin.ModelAdmin):
-    def get_queryset(self, request):
-        return super().get_queryset(request).filter(dnt__lt=timezone.now())
-    
-admin.site.register(ExpiredEvent, ExpiredEventAdmin)
+@admin.register(Bookings)
+class BookingsAdmin(admin.ModelAdmin):
+    list_display = ["event", "participant", "booked_at"]

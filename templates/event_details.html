@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}{{ event.name }} — EventHive{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <div class="row g-4">
+
+    <!-- ===== Left: Event info ===== -->
+    <div class="col-lg-7">
+      <span class="date-chip mb-3 d-inline-block">
+        <i class="bi bi-calendar-event me-1"></i>{{ event.dnt|date:"l, M d, Y — g:i A" }}
+      </span>
+      <h1 class="h2 mb-2">{{ event.name }}</h1>
+      <p class="text-muted-soft mb-4"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}
+        &nbsp;·&nbsp; Hosted by {{ event.organizer.username }}
+      </p>
+      <p class="mb-4">{{ event.description|safe }}</p>
+
+      <!-- Action buttons -->
+      <div class="d-flex gap-2">
+        {% if user.is_authenticated %}
+          {% if user_has_joined %}
+            <form method="post" action="{% url 'cancel_event' event.id %}" id="cancelForm">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger-soft px-4" id="cancelBtn">
+                <i class="bi bi-x-circle me-1"></i>Cancel My Seat
+              </button>
+            </form>
+          {% elif event.seats > event.total_seats %}
+            <button class="btn btn-secondary px-4" disabled>Event Full</button>
+          {% else %}
+            <form method="post" action="{% url 'join_event' event.id %}" id="joinForm">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary px-4" id="joinBtn">
+                <i class="bi bi-check-circle me-1"></i>Join Event
+              </button>
+            </form>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary px-4">
+            Login to Join
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ===== Right: Seat occupancy card ===== -->
+    <div class="col-lg-5">
+      <div class="card event-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Seat Occupancy</h5>
+          <span class="badge {% if event.seats >= event.total_seats %}badge-full{% else %}badge-open{% endif %} rounded-pill px-2 py-1">
+            {{ event.seats }} / {{ event.total_seats }}
+          </span>
+        </div>
+
+        <div class="seat-meter mb-4" style="height: 8px;">
+          {% widthratio event.seats event.total_seats 100 as pct_filled %}
+          <div class="fill {% if pct_filled >= 100 %}full{% elif pct_filled >= 70 %}almost-full{% endif %}"
+               style="width: {{ pct_filled }}%;"></div>
+        </div>
+
+        <!-- Seat grid: one box per seat -->
+        <div class="seat-grid mb-3">
+          {% for seat_num in seat_range %}
+            {% if forloop.counter0 < event.seats %}
+              {% if forloop.counter0 == my_seat_index %}
+                <div class="seat booked you" title="Your seat">You</div>
+              {% else %}
+              <div class="seat available" title="Available">{{ forloop.counter }}</div>
+              {% endif %}
+            {% else %}
+              <div class="seat booked" title="Booked">✓</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="small text-muted-soft">
+          <span class="legend-dot ms-3" style="background-color:#5ef372;"></span>Available
+          <span class="legend-dot ms-3" style="background-color:#E17055;"></span>Booked
+          <span class="legend-dot ms-3" style="background-color:#6C5CE7;"></span>Your seat
+        </div>
+      </div>
+
+      <!-- Attendee list -->
+      {% if attendees %}
+      <div class="card event-card p-4 mt-4">
+        <h6 class="mb-3">Attendees ({{ attendees|length }})</h6>
+        <table class="table table-sm mb-0">
+          <tbody>
+            {% for booking in attendees %}
+              <tr>
+                <td><i class="bi bi-person-circle me-2 text-muted-soft"></i>{{ booking.participant.username|default:"Deleted user" }}</td>
+                <td class="text-end text-muted-soft small">{{ booking.booked_at|date:"M d" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // jQuery confirm dialogs before join/cancel — small UX touch from the workshop's jQuery segment
+  $(function () {
+    $('#joinForm').on('submit', function (e) {
+      if (!confirm('Join this event? A confirmation email will be sent to you.')) {
+        e.preventDefault();
+      }
+    });
+    $('#cancelForm').on('submit', function (e) {
+      if (!confirm('Cancel your seat for this event?')) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
+{% endblock %}
