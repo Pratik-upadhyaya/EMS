@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("Hello, World!")
+    return render(request, "home.html")
 
 def send_test_email(request):
     send_mail(
